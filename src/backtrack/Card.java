@@ -1,8 +1,11 @@
+package backtrack;
+
 
 public class Card {
 	
 	public int number;
 	public String color;
+	public boolean passedBy;
 	
 	public Card(int number, String color) {
 		super();
@@ -20,6 +23,15 @@ public class Card {
 	}
 	public void setColor(String color) {
 		this.color = color;
+	}
+	public boolean isPassedBy() {
+		return passedBy;
+	}
+	public void setPassedBy(boolean passedBy) {
+		this.passedBy = passedBy;
+	}
+	public String showCard(){
+		return this.color+","+this.number;
 	}
 	
 	
