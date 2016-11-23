@@ -1,6 +1,5 @@
 package backtrack;
 
-
 public class Card {
 	
 	public int number;
@@ -33,9 +32,13 @@ public class Card {
 	public String showCard(){
 		return this.color+","+this.number;
 	}
-	
-	
-	
-	
-
+	public boolean same(Card otherCard){
+		boolean b;
+		if((this.getNumber()==otherCard.getNumber()) && (this.getColor().matches(otherCard.getColor())))
+			b = true;
+		else b = false;
+		return b;
+		}
 }
+
+
