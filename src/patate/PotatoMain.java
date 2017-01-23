@@ -1,20 +1,33 @@
 package patate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import backtrack.Card;
 
 public class PotatoMain {
 
-	static List<List<Card>> patateList = new ArrayList<>();
+	static List<Potato> patateList = new ArrayList<>();
 	static List<Card> patate = new ArrayList<>();
 	public static boolean lastMoveWasDown;
 	public static final String LINE_BREAK = "--------------------";
+	// private static final Logger LOGGER =
+	// Logger.getLogger(PotatoMain.class.getName());
+
+	public static List<Card> potatoesIntersection(List<Card> previous, List<Card> current) {
+		List<Card> intersection = new ArrayList<>();
+		for (Card crtCard : current) {
+			for (Card prvCard : previous) {
+				if (prvCard.same(crtCard))
+//					System.out.println(crtCard.showCard());
+					intersection.add(crtCard);
+			}
+		}
+		return intersection;
+
+	}
 
 	// To get the the number of "NO" marked neighbors: if(there's a neighbor
 	// not marked) markedNeighbor ++;
-
 	public static int checkMarkedNeighbors(Card crd, List<Card> cards) {
 		int noMarkedNeighbor = 0;
 
@@ -56,7 +69,7 @@ public class PotatoMain {
 				for (Card c : patate) {
 					patatetmp.add(c);
 				}
-				patateList.add(patatetmp);
+				patateList.add(new Potato(patatetmp));
 
 				// -> Show the Potato:
 				// System.out.println(LINE_BREAK + "\n [count == -1] Patate:");
@@ -82,25 +95,42 @@ public class PotatoMain {
 		return best;
 	}
 
+	public static void setIntersections() {
+		int lastElement = patateList.size() - 1;
+		patateList.get(patateList.size() - 1).setPast(potatoesIntersection(patateList.get(lastElement - 1).getPotato(),
+				patateList.get(lastElement).getPotato()));
+
+		patateList.get(0).setFuture(potatoesIntersection(patateList.get(0).getPotato(), patateList.get(1).getPotato()));
+		for (int i = 1; i < patateList.size() - 1; i++) {
+//			System.out.println("Past Cards:");
+			patateList.get(i)
+					.setPast(potatoesIntersection(patateList.get(i - 1).getPotato(), patateList.get(i).getPotato()));
+//			System.out.println("Future Cards:");
+			patateList.get(i)
+					.setFuture(potatoesIntersection(patateList.get(i).getPotato(), patateList.get(i + 1).getPotato()));
+		}
+	}
+
 	public static void main(String[] args) {
 
 		List<Card> myCards = new ArrayList<Card>();
 
-		Card card = new Card(2, "red");
+		Card card = new Card(1, "red");
 
-		Card card0 = new Card(2, "yellow");
-		Card card1 = new Card(3, "red");
-		Card card2 = new Card(3, "blue");
+		Card card0 = new Card(1, "pink");
+		Card card1 = new Card(2, "red");
+		Card card2 = new Card(4, "pink");
 		Card card3 = new Card(5, "red");
-		Card card4 = new Card(6, "blue");
-		Card card5 = new Card(6, "pink");
-		Card card6 = new Card(4, "blue");
-		Card card7 = new Card(8, "blue");
-		Card card8 = new Card(8, "red");
-		Card card9 = new Card(9, "blue");
-		Card card10 = new Card(8, "pink");
+		Card card4 = new Card(2, "green");
+		Card card5 = new Card(6, "green");
+		Card card6 = new Card(6, "red");
+		Card card7 = new Card(6, "blue");
+		Card card8 = new Card(10, "blue");
+		Card card9 = new Card(6, "yellow");
+		Card card10 = new Card(5, "white");
+		Card card11 = new Card(5, "orange");
+		Card card12 = new Card(3, "white");
 
-		
 		myCards.add(card0);
 		myCards.add(card1);
 		myCards.add(card2);
@@ -112,8 +142,10 @@ public class PotatoMain {
 		myCards.add(card8);
 		myCards.add(card9);
 		myCards.add(card10);
-
+		myCards.add(card11);
+		myCards.add(card12);
 		patateCreation(card, myCards);
+		setIntersections();
 		// System.out.println(checkMarkedNeighbors(card, myCards));
 
 		// We used to add the same object (patate) in patateList so when our
@@ -122,10 +154,13 @@ public class PotatoMain {
 		// we used a new
 		// ArrayList each time we wanted to save the potato in our patateList.
 		int i = 0;
-		for (List<Card> p : patateList) {
+		for (Potato p : patateList) {
 			i++;
-			System.out.println(LINE_BREAK + "\n Patate " + i);
-			for (Card c : p) {
+			System.out.println(LINE_BREAK + "\n Patate " + i +"\n");
+			System.out.println("Past Intersection size: " + p.getPast().size());
+			System.out.println("Future Intersection size: " + p.getFuture().size() + "\n");
+
+			for (Card c : p.getPotato()) {
 				System.out.println(c.showCard());
 			}
 			System.out.println(LINE_BREAK);
